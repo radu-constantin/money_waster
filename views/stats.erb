@@ -1,0 +1,8 @@
+<h3>Here is what you've spent between <%=session[:start_date]%> and <%=session[:end_date]%>:</h3>
+<ul>
+    <% session[:selected_expenses].each do |expense| %>
+        <li><%=expense[:name]%> <%=expense[:price]%>$</li>
+    <%end%>
+</ul>
+<h3>Total spending:<%= total_expenses(session[:selected_expenses]) %>$</h3>
+

@@ -1,6 +1,6 @@
 
 <h1>Welcome to Money Waster</h1>
-<form action="" method="">
+<form action="/new_expense" method="POST">
     <h2>What did you <u>waste</u> your money on this time?</h2>
 
     <label for="item">Item:</label>
@@ -14,11 +14,11 @@
     <div id="wasted_check">
         <p>Wasted money?</p>
         <label for="wasted">Yes</label>
-        <input type="radio" name="wasted" id="wasted" value="yes">
+        <input type="radio" name="wasted" id="wasted" value="yes" required>
         <label for="not_wasted">No</label>
-        <input type="radio" name="wasted" id="not_wasted" value="no">
+        <input type="radio" name="wasted" id="not_wasted" value="no" required>
         <div>
         <br>
         <input type="submit" value="Submit">
     </div>
-     </form>
+</form>

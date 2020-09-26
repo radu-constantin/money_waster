@@ -6,3 +6,4 @@ ruby "2.7"
 
 gem "sinatra"
 gem "sinatra-reloader"
+gem "pry"
