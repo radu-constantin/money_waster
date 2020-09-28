@@ -1,0 +1,25 @@
+* {
+    background-color: black;
+}
+
+h1 {
+    font-family: Arial;
+}
+
+.dropbtn {
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown_content {
+    display: none;
+    position: absolute;
+}
+
+.dropdown_content a {
+    display: block;
+}

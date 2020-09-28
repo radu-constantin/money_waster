@@ -38,16 +38,18 @@ def login_success?(username, password)
   username == @username && password == @password
 end
 
+#Display Home Page
 get "/" do
   redirect "/login" unless session[:user]
   erb :index, layout: :layout
-  
 end
 
+#Display Login Page
 get "/login" do
   erb :login, layout: :layout    
 end
 
+#Send information for login authentication
 post "/login" do
   if login_success?(params[:username], params[:password])
     session[:user] = params[:username]
@@ -57,6 +59,7 @@ post "/login" do
   end
 end
 
+#Log out mechanic
 get "/logout" do
   session.delete(:user)
   redirect "/login"

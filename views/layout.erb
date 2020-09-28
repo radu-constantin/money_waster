@@ -4,7 +4,7 @@
 
 <head>
     <title>Money Waster</title>
-    <link href="../public/style.css" type="text/css" rel="stylesheet">
+    <link href="./style.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
@@ -12,7 +12,16 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/select_timeframe">Expenses</a></li>
+                <li>
+                    <div class="dropdown">
+                        <button class="dropbtn">Dropdown</button>
+                        <div class="dropdown_content">
+                            <a href="">Today</a>
+                            <a href="">This Month</a>
+                            <a href="">This Year</a>
+                        </div>
+                    </div>
+                </li>
                 <li><a href="/logout">Sign Out</a></li>
             </ul>
         </nav>
