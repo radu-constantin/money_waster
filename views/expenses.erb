@@ -1,8 +1,30 @@
 <h3>Here is what you've spent on <%=@display_date%>:</h3>
-<ul>
-    <% session[:selected_expenses].each do |expense| %>
-        <li><%=expense[:name]%> <%=expense[:price]%>$</li>
-    <%end%>
-</ul>
-<h3>Total spending:<%= total_expenses(session[:selected_expenses]) %>$</h3>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Wasted?</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% session[:selected_expenses].each do |expense| %>
+            <tr>
+                <td></td>
+                <td><%= expense[:name] %></td>
+                <td><%= expense[:price] %> </td>
+                <td><%= expense[:wasted_check] %></td>
+                <td><%= expense[:time].strftime("%Y-%m-%d") %> </td>
+            </tr>
+        <% end %>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th scope="row">TOTAL</th>
+            <td colspan="4"> <%= total_expenses(session[:selected_expenses]) %>$</td>
+        </tr>
+    </tfoot>
+</table>
 
