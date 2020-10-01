@@ -45,8 +45,10 @@ helpers do
   end
 end
 
-def login_success?(username, password)
-  username == @username && password == @password
+def login_error?(username, password)
+  if username != @username || password != @password
+    "The username or password entered is incorrect!"
+  end
 end
 
 #Display Home Page
@@ -62,11 +64,13 @@ end
 
 #Send information for login authentication
 post "/login" do
-  if login_success?(params[:username], params[:password])
+  error = login_error?(params[:username], params[:password])
+  if error
+    session[:error] = error
+    erb :login, layout: :layout
+  else
     session[:user] = params[:username]
     redirect "/"
-  else
-    redirect "/login"
   end
 end
 
@@ -113,7 +117,6 @@ get "/expenses/:date" do
   end
   session[:selected_expenses] = select_expense_timeframe(@start_date, @end_date, params[:date])
   erb :expenses, layout: :layout
-  #binding.pry
 end
 
 

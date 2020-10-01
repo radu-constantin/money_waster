@@ -2,6 +2,11 @@
 <h1>Welcome to Money Waster</h1>
 <form action="/login" method="POST">
     <h3>Please enter your login information.</h3>
+    <% if session[:error] %>
+        <div class="error-message">
+            <p><%=session.delete(:error) %></p>
+        </div>
+    <% end %>
     <label for="username">Username</label>
     <input type="text" name="username" id="username" required>
     <br>
