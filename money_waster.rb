@@ -45,14 +45,6 @@ helpers do
   end
 end
 
-def total_expense(expense_array)
-  sum = 0
-  expense_array.each do |expense|
-    sum += expense[:price]
-  end
-  sum
-end
-
 def login_error?(username, password)
   if username != @username || password != @password
     "The username or password entered is incorrect!"
