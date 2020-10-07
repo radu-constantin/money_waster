@@ -10,20 +10,21 @@
         </tr>
     </thead>
     <tbody>
-        <% session[:selected_expenses].each do |expense| %>
+        <% @selected_expenses.each do |expense| %>
             <tr>
                 <td></td>
-                <td><%= expense[:name] %></td>
-                <td><%= expense[:price] %> </td>
-                <td><%= expense[:wasted_check] %></td>
-                <td><%= expense[:time].strftime("%Y-%m-%d") %> </td>
+                <td><%= expense.name %></td>
+                <td><%= expense.price %></td>
+                <td><%= expense.wasted_check %></td>
+                <td><%= expense.date %></td>
+                <td><a href="/expense/<%=expense.id%>">Edit</a>
             </tr>
         <% end %>
     </tbody>
     <tfoot>
         <tr>
             <th scope="row">TOTAL</th>
-            <td colspan="4"> <%= total_expenses(session[:selected_expenses]) %>$</td>
+            <td colspan="4"> <%= total_expenses(@selected_expenses) %>$</td>
         </tr>
     </tfoot>
 </table>

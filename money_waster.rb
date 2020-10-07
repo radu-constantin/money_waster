@@ -1,6 +1,7 @@
 require "sinatra"
 require "sinatra/reloader"
 require "pry"
+require_relative "app.rb"
 
 configure do
   enable :sessions
@@ -10,40 +11,19 @@ end
 before do
   @username = "user"
   @password = "password"
-  session[:expenses] ||= []
-  session[:selected_expenses] ||= []
+  session[:list] ||= List.new(@username)
 end
 
 helpers do
-  def total_expenses(array)
+  def total_expenses(list)
     sum = 0
-    array.each do |expense|
-      sum += expense[:price].to_i
+    list.each do |expense|
+      sum += expense.price.to_i
     end
     sum
   end
-
-  def select_expense_timeframe(start_date, end_date, timeframe)
-    start_year, start_month, start_day = start_date.split("-").map {|date| date.to_i}
-    end_year, end_month, end_day = end_date.split("-").map {|date| date.to_i}
-    if timeframe == "custom" || timeframe == "today"
-      session[:expenses].select do |expense|
-        (start_year..end_year).include?(expense[:time].year) && 
-        (start_month..end_month).include?(expense[:time].month) && 
-        (start_day..end_day).include?(expense[:time].day)
-      end
-    elsif timeframe == "this_month"
-      session[:expenses].select do |expense|
-        (start_year..end_year).include?(expense[:time].year) && 
-        (start_month..end_month).include?(expense[:time].month)
-      end
-    elsif timeframe == "this_year"
-      session[:expenses].select do |expense|
-        (start_year..end_year).include?(expense[:time].year)
-      end
-    end
-  end
 end
+
 
 def login_error?(username, password)
   if username != @username || password != @password
@@ -82,8 +62,10 @@ end
 
 #Adds a new expense
 post "/new_expense" do
-  session[:expenses] << {name: params[:item], price: params[:price], wasted_check: params[:wasted], time: Time.now}
+  new_expense = Expense.new(params[:item], params[:price], params[:wasted])
+  session[:list].add_expense(new_expense) 
   erb :index, layout: :layout
+  binding.pry
 end
 
 #Allows selection of a custom timeframe
@@ -93,7 +75,6 @@ end
 
 #Inputs custom timeframe
 post "/expenses" do
-  session[:selected_expenses] = select_expense_timeframe(params[:start_date], params[:end_date], "custom")
   session[:start_date] = params[:start_date]
   session[:end_date] = params[:end_date]
   redirect "/expenses/custom"
@@ -108,15 +89,26 @@ get "/expenses/:date" do
     @display_date = "today"
   elsif params[:date] == "this_month"
     @display_date = "this month"
+    @start_date = "#{Time.now.year}-#{Time.now.month}-1" 
   elsif params[:date] == "this_year"
     @display_date = "this year"
+    @start_date = "#{Time.now.year}-01-1"
   elsif params[:date] == "custom"
     @start_date = session[:start_date]
     @end_date = session[:end_date]
     @display_date = "between #{@start_date} and #{@end_date}"
   end
-  session[:selected_expenses] = select_expense_timeframe(@start_date, @end_date, params[:date])
+  @selected_expenses = session[:list].select_expenses(@start_date, @end_date)
+  
   erb :expenses, layout: :layout
+  #binding.pry
+end
+
+#Shows and allows edit of specific expense
+get "/expense/:id" do
+  @expense = session[:list].select_expense_by_id(params[:id])
+  erb :expense, layout: :layout
+  #binding.pry
 end
 
 
