@@ -1,31 +1,43 @@
-<h3>Here is what you've spent on <%=@display_date%>:</h3>
-<table>
-    <thead>
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Wasted?</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% @selected_expenses.each do |expense| %>
+
+<% if @selected_expenses.empty? %>
+    <h3> You haven't spent any money <%=@display_date%>. </h3>
+<% else %>
+    <h3>Here is what you've spent on <%=@display_date%>:</h3>
+    <table>
+        <thead>
             <tr>
-                <td></td>
-                <td><%= expense.name %></td>
-                <td><%= expense.price %></td>
-                <td><%= expense.wasted_check %></td>
-                <td><%= expense.date %></td>
-                <td><a href="/expense/<%=expense.id%>">Edit</a>
+                <th></th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Wasted?</th>
+                <th>Date</th>
             </tr>
-        <% end %>
-    </tbody>
-    <tfoot>
-        <tr>
-            <th scope="row">TOTAL</th>
-            <td colspan="4"> <%= total_expenses(@selected_expenses) %>$</td>
-        </tr>
-    </tfoot>
-</table>
+        </thead>
+        <tbody>
+            <% @selected_expenses.each do |expense| %>
+                <tr>
+                    <td></td>
+                    <td><%= expense.name %></td>
+                    <td><%= expense.price %></td>
+                    <td><%= expense.wasted_check %></td>
+                    <td><%= expense.date %></td>
+                    <td><a href="/expense/<%=expense.id%>">Edit</a>
+                </tr>
+                <% end %>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th scope="row">TOTAL</th>
+                <td colspan="4"> <%= total_expenses(@selected_expenses) %>$</td>
+            </tr>
+             <tr>
+                <th scope="row">TOTAL Wasted</th>
+                <td colspan="4"> <%= total_expenses(@wasted_money) %>$</td>
+            </tr>
+        </tfoot>
+    </table>
+    <% if total_expenses(@wasted_money) > 0 %>
+     <h3>You've wasted <%=@percentage_wasted%>% of your total expenses.</h3>
+    <% end %>
+<% end %>
 

@@ -52,7 +52,8 @@ class List
 end
 
 class Expense
-    attr_reader :id, :date, :comparable_date, :name, :price, :wasted_check
+    attr_reader :id, :date
+    attr_accessor :comparable_date, :name, :price, :wasted_check
 
     def initialize(name, price, wasted_check)
         @id = ID_generator.generate_id
@@ -60,6 +61,11 @@ class Expense
         @price = price
         @wasted_check = wasted_check
         @date = Time.now.strftime("%Y-%m-%d")
+        @comparable_date = Date.strptime(@date, "%Y-%m-%d")
+    end
+
+    def date=(new_date)
+        @date = new_date
         @comparable_date = Date.strptime(@date, "%Y-%m-%d")
     end
 

@@ -1,1 +1,26 @@
-<%=@expense.name%>
+<form action="/expense/<%=@expense.id%>" method="POST">
+    <h2>Edit:</h2>
+
+    <label for="item">Item:</label>
+    <input type="text" name="item" id="item" value= "<%=@expense.name%>" required>
+    <br>
+    <br>
+    <label for="price">Price:</label>
+    <input type="number" name="price" id="price" min="0" value= "<%=@expense.price%>" required>
+    <br>
+    <br>
+    <label for="date">Date:</label>
+    <input type="date" name="date" id="date" value="<%=@expense.date%>" required>
+    <br>
+    <br>
+    <div id="wasted_check">
+        <p>Wasted money?</p>
+        <label for="wasted">Yes</label>
+        <input type="radio" name="wasted" id="wasted" value="yes" required>
+        <label for="not_wasted">No</label>
+        <input type="radio" name="wasted" id="not_wasted" value="no" required>
+        <div>
+        <br>
+        <input type="submit" value="Submit">
+    </div>
+</form>

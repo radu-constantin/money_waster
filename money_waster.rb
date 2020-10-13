@@ -6,6 +6,7 @@ require_relative "app.rb"
 configure do
   enable :sessions
   set :session_secret, "secret"
+  set :bind , '0.0.0.0'
 end
 
 before do
@@ -22,12 +23,15 @@ helpers do
     end
     sum
   end
-end
 
+  def login_error?(username, password)
+    if username != @username || password != @password
+      "The username or password entered is incorrect!"
+    end
+  end
 
-def login_error?(username, password)
-  if username != @username || password != @password
-    "The username or password entered is incorrect!"
+  def wasted_percentage(total_sum, wasted_sum)
+    total_sum > 0 ? (wasted_sum * 100) / total_sum : 0
   end
 end
 
@@ -65,7 +69,6 @@ post "/new_expense" do
   new_expense = Expense.new(params[:item], params[:price], params[:wasted])
   session[:list].add_expense(new_expense) 
   erb :index, layout: :layout
-  binding.pry
 end
 
 #Allows selection of a custom timeframe
@@ -87,28 +90,41 @@ get "/expenses/:date" do
   @end_date = @current_day
   if params[:date] == "today"
     @display_date = "today"
+    session[:previous_page] = "/expenses/today"
   elsif params[:date] == "this_month"
     @display_date = "this month"
     @start_date = "#{Time.now.year}-#{Time.now.month}-1" 
+    session[:previous_page] = "/expenses/this_month"
   elsif params[:date] == "this_year"
     @display_date = "this year"
     @start_date = "#{Time.now.year}-01-1"
+    session[:previous_page] = "/expenses/this_year"
   elsif params[:date] == "custom"
     @start_date = session[:start_date]
     @end_date = session[:end_date]
+    session[:previous_page] = "/expenses/custom"
     @display_date = "between #{@start_date} and #{@end_date}"
   end
   @selected_expenses = session[:list].select_expenses(@start_date, @end_date)
-  
+  @wasted_money = @selected_expenses.select {|expense| expense.wasted_check == "yes"}
+  @percentage_wasted = wasted_percentage(total_expenses(@selected_expenses), total_expenses(@wasted_money))
   erb :expenses, layout: :layout
-  #binding.pry
 end
 
 #Shows and allows edit of specific expense
 get "/expense/:id" do
   @expense = session[:list].select_expense_by_id(params[:id])
   erb :expense, layout: :layout
-  #binding.pry
+end
+
+#Edits specific expense and redirects to home page.
+post "/expense/:id" do
+  expense = session[:list].select_expense_by_id(params[:id])
+  expense.name = params[:item]
+  expense.price = params[:price]
+  expense.date = params[:date]
+  expense.wasted_check = params[:wasted]
+  redirect "#{session[:previous_page]}"
 end
 
 
