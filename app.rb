@@ -40,9 +40,9 @@ class List
     def select_expenses(start_date, end_date = nil)
         start_date = Date.strptime(start_date, "%Y-%m-%d")
         end_date = Date.strptime(end_date, "%Y-%m-%d")
-            self.expenses.select do |expense|
-                expense.comparable_date >= start_date && expense.comparable_date <= end_date
-            end
+        self.expenses.select do |expense|
+            expense.comparable_date >= start_date && expense.comparable_date <= end_date
+        end
     end
 
     def select_expense_by_id(id)

@@ -88,23 +88,16 @@ get "/expenses/:date" do
   @current_day = Time.now.strftime("%Y-%m-%d")
   @start_date = @current_day
   @end_date = @current_day
-  if params[:date] == "today"
-    @display_date = "today"
-    session[:previous_page] = "/expenses/today"
-  elsif params[:date] == "this_month"
-    @display_date = "this month"
+  session[:previous_page] = "expenses/#{params[:date]}"
+  if params[:date] == "this_month"
     @start_date = "#{Time.now.year}-#{Time.now.month}-1" 
-    session[:previous_page] = "/expenses/this_month"
   elsif params[:date] == "this_year"
-    @display_date = "this year"
     @start_date = "#{Time.now.year}-01-1"
-    session[:previous_page] = "/expenses/this_year"
   elsif params[:date] == "custom"
     @start_date = session[:start_date]
     @end_date = session[:end_date]
-    session[:previous_page] = "/expenses/custom"
-    @display_date = "between #{@start_date} and #{@end_date}"
   end
+  params[:date] == "custom" ? @display_date = "between #{@start_date} and #{@end_date}" : @display_date = params[:date]
   @selected_expenses = session[:list].select_expenses(@start_date, @end_date)
   @wasted_money = @selected_expenses.select {|expense| expense.wasted_check == "yes"}
   @percentage_wasted = wasted_percentage(total_expenses(@selected_expenses), total_expenses(@wasted_money))
