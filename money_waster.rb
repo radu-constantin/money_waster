@@ -2,6 +2,7 @@ require "sinatra"
 require "sinatra/reloader"
 require "pry"
 require_relative "app.rb"
+require_relative "db_api.rb"
 
 configure do
   enable :sessions
@@ -10,8 +11,7 @@ configure do
 end
 
 before do
-  @username = "user"
-  @password = "password"
+  @db = Database.new
   session[:list] ||= List.new(@username)
 end
 
@@ -25,9 +25,13 @@ helpers do
   end
 
   def login_error?(username, password)
-    if username != @username || password != @password
+    if @db.login_check(username, password) == false
       "The username or password entered is incorrect!"
     end
+  end
+
+  def registration_error?(username)
+    "The username is already used." if @db.username_taken?(username)
   end
 
   def wasted_percentage(total_sum, wasted_sum)
@@ -37,8 +41,26 @@ end
 
 #Display Home Page
 get "/" do
-  redirect "/login" unless session[:user]
+  redirect "/login" unless session[:user_id]
   erb :index, layout: :layout
+end
+
+#Display Registration Page
+get "/register_user" do
+  erb :register_user, layout: :layout
+end
+
+post "/register_user" do
+  error = registration_error?(params[:username])
+  if error
+    session[:message] = error
+    erb :register_user, layout: :layout
+  else 
+    message = "You've been successfully registered."
+    session[:message] = message
+    @db.register_new_user(params[:username], params[:password])
+    redirect "/login"
+  end
 end
 
 #Display Login Page
@@ -50,17 +72,19 @@ end
 post "/login" do
   error = login_error?(params[:username], params[:password])
   if error
-    session[:error] = error
+    session[:message] = error
     erb :login, layout: :layout
   else
-    session[:user] = params[:username]
+    session[:user_id] = @db.user_id
+    session[:username] = @db.username
     redirect "/"
   end
 end
 
 #Log out mechanic
 get "/logout" do
-  session.delete(:user)
+  session.delete(:user_id)
+  session.delete(:username)
   redirect "/login"
 end
 

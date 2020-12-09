@@ -1,7 +1,7 @@
 CREATE TABLE users (
 id serial PRIMARY KEY,
 username varchar(30) UNIQUE NOT NULL,
-password varchar NOT NULL CHECK(LENGTH(password) > 8)
+password varchar NOT NULL CHECK(LENGTH(password) >= 8)
 );
 
 CREATE TABLE expenses (
