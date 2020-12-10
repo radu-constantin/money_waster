@@ -1,18 +1,16 @@
 require "sinatra"
-require "sinatra/reloader"
-require "pry"
-require_relative "app.rb"
+require "sinatra/reloader" if development?
+require "pry" if development?
 require_relative "db_api.rb"
 
 configure do
   enable :sessions
   set :session_secret, "secret"
-  set :bind , '0.0.0.0'
+  #set :bind , '0.0.0.0'
 end
 
 before do
   @db = Database.new
-  session[:list] ||= List.new(@username)
 end
 
 helpers do
