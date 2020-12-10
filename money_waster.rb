@@ -43,6 +43,18 @@ helpers do
   def wasted_percentage(total_sum, wasted_sum)
     total_sum > 0 ? (wasted_sum * 100) / total_sum : 0
   end
+
+  def translate_wasted_check(status)
+    status == 't' ? 'yes' : 'no'
+  end
+
+  def login_check
+    unless session[:user_id]
+      session[:message] = 'You must be logged in to access this page.'
+      redirect "/login"
+    end
+  end
+
 end
 
 #Display Home Page
@@ -98,13 +110,12 @@ end
 #Adds a new expense
 post "/new_expense" do
   @db.insert_expense(params[:item], params[:price], params[:wasted], session[:user_id])
-  #new_expense = Expense.new(params[:item], params[:price], params[:wasted])
-  #session[:list].add_expense(new_expense) 
   erb :index, layout: :layout
 end
 
 #Allows selection of a custom timeframe
 get "/select_timeframe" do
+  login_check
   erb :select_timeframe, layout: :layout
 end
 
@@ -117,6 +128,7 @@ end
 
 #Shows expense list
 get "/expenses/:date" do
+  login_check
   @current_day = Time.now.strftime("%Y-%m-%d")
   @start_date = @current_day
   @end_date = @current_day
@@ -129,7 +141,7 @@ get "/expenses/:date" do
     @start_date = session[:start_date]
     @end_date = session[:end_date]
   end
-  params[:date] == "custom" ? @display_date = "between #{@start_date} and #{@end_date}" : @display_date = params[:date]
+  params[:date] == "custom" ? @display_date = "between #{@start_date} and #{@end_date}" : @display_date = params[:date].split("_").join(" ")
   @selected_expenses = @db.select_expenses(session[:user_id], @start_date, @end_date)
   @wasted_money = @selected_expenses.select {|expense| expense[:wasted_check] == 't'}
   @percentage_wasted = wasted_percentage(total_expenses(@selected_expenses), total_expenses(@wasted_money))
@@ -138,6 +150,7 @@ end
 
 #Shows and allows edit of specific expense
 get "/expense/:id" do
+  login_check
   @expense = @db.select_specific_expense(params[:id])
   erb :expense, layout: :layout
 end

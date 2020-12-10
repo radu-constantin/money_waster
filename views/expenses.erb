@@ -18,7 +18,7 @@
                     <td></td>
                     <td><%= expense[:name] %></td>
                     <td><%= expense[:price] %></td>
-                    <td><%= expense[:wasted_check] %></td>
+                    <td><%= translate_wasted_check(expense[:wasted_check]) %></td>
                     <td><%= expense[:date] %></td>
                     <td><a href="/expense/<%=expense[:id]%>">Edit</a>
                 </tr>
