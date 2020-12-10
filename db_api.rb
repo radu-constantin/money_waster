@@ -5,7 +5,11 @@ class Database
     attr_reader :user_id, :username
 
     def initialize
-        @db = PG.connect(dbname: "expense_log")
+        @db = if Sinatra::Base.production?
+            PG.connect(ENV['DATABASE_URL'])
+              else
+            PG.connect(dbname: "expense_log")
+              end
         @user_id = nil
         @username = nil
         @errors = []
