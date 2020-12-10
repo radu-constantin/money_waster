@@ -15,6 +15,10 @@ class Database
         @errors = []
     end
 
+    def disconnect
+        @db.close
+    end
+
     def query(statement, *params)
         @db.exec_params(statement, params)
     end

@@ -1,17 +1,24 @@
 require "sinatra"
 require "sinatra/reloader" if development?
-require "pry" if development?
 require_relative "db_api.rb"
 
 configure do
   enable :sessions
   set :session_secret, "secret"
+
+end
+
+configure(:development) do
   also_reload "db_api.rb"
 end
 
 
 before do
   @db = Database.new
+end
+
+after do
+  @db.disconnect
 end
 
 helpers do
