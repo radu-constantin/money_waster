@@ -12,7 +12,6 @@ class Database
               end
         @user_id = nil
         @username = nil
-        @errors = []
     end
 
     def disconnect
@@ -44,9 +43,8 @@ class Database
         sql = <<~SQL
         INSERT INTO users (username, password)
         VALUES($1, $2);
-        check = query(sql, username, password)
-        @errors << ERROR_MESSAGE;
         SQL
+        check = query(sql, username, password)
     end
 
     def username_taken?(username)
