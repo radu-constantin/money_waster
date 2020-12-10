@@ -49,6 +49,55 @@ class Database
         check = query(sql, username)
         check.ntuples == 1 ? true : false
     end
+
+    def insert_expense(name, price, wasted_check, user_id)
+        sql = <<~SQL
+        INSERT INTO expenses(name, price, wasted_check, user_id)
+        VALUES ($1, $2, $3, $4)
+        SQL
+        query(sql, name, price, wasted_check, user_id)
+    end
+
+    def select_expenses(user_id, start_date, end_date)
+        sql = <<~SQL
+        SELECT id, name, price, wasted_check, time_added FROM expenses
+        WHERE user_id = $1 AND time_added BETWEEN $2 AND $3;
+        SQL
+        selection = query(sql, user_id, start_date, end_date)
+        expenses_to_hash(selection)
+    end
+
+    def expenses_to_hash(expenses)
+        expenses.map do |tuple|
+            {
+            id: tuple['id'],
+            name: tuple['name'],
+            price: tuple['price'],
+            wasted_check: tuple['wasted_check'],
+            date: tuple['time_added']
+        }
+        end
+    end
+
+    def select_specific_expense(expense_id)
+        sql = <<~SQL
+        SELECT * FROM expenses
+        WHERE id = $1;
+        SQL
+        expenses_to_hash(query(sql, expense_id))
+    end
+
+    def edit_expense(new_name, new_price, new_date, new_wasted_check, expense_id)
+        sql = <<~SQL
+        UPDATE expenses
+        SET name = $1, price = $2, time_added = $3, wasted_check = $4
+        WHERE id = $5;
+        SQL
+        query(sql, new_name, new_price, new_date, new_wasted_check, expense_id)
+    end
 end
 
-p Database.new.username_taken?("radu")
+
+
+
+

@@ -16,10 +16,10 @@ before do
 end
 
 helpers do
-  def total_expenses(list)
+  def total_expenses(expenses)
     sum = 0
-    list.each do |expense|
-      sum += expense.price.to_i
+    expenses.each do |expense|
+      sum += expense[:price].to_i
     end
     sum
   end
@@ -50,6 +50,7 @@ get "/register_user" do
   erb :register_user, layout: :layout
 end
 
+#Registers a new user
 post "/register_user" do
   error = registration_error?(params[:username])
   if error
@@ -90,8 +91,9 @@ end
 
 #Adds a new expense
 post "/new_expense" do
-  new_expense = Expense.new(params[:item], params[:price], params[:wasted])
-  session[:list].add_expense(new_expense) 
+  @db.insert_expense(params[:item], params[:price], params[:wasted], session[:user_id])
+  #new_expense = Expense.new(params[:item], params[:price], params[:wasted])
+  #session[:list].add_expense(new_expense) 
   erb :index, layout: :layout
 end
 
@@ -122,25 +124,22 @@ get "/expenses/:date" do
     @end_date = session[:end_date]
   end
   params[:date] == "custom" ? @display_date = "between #{@start_date} and #{@end_date}" : @display_date = params[:date]
-  @selected_expenses = session[:list].select_expenses(@start_date, @end_date)
-  @wasted_money = @selected_expenses.select {|expense| expense.wasted_check == "yes"}
+  @selected_expenses = @db.select_expenses(session[:user_id], @start_date, @end_date)
+  @wasted_money = @selected_expenses.select {|expense| expense[:wasted_check] == 't'}
   @percentage_wasted = wasted_percentage(total_expenses(@selected_expenses), total_expenses(@wasted_money))
   erb :expenses, layout: :layout
 end
 
 #Shows and allows edit of specific expense
 get "/expense/:id" do
-  @expense = session[:list].select_expense_by_id(params[:id])
+  @expense = @db.select_specific_expense(params[:id])
   erb :expense, layout: :layout
 end
 
 #Edits specific expense and redirects to home page.
 post "/expense/:id" do
-  expense = session[:list].select_expense_by_id(params[:id])
-  expense.name = params[:item]
-  expense.price = params[:price]
-  expense.date = params[:date]
-  expense.wasted_check = params[:wasted]
+  expense = @db.select_specific_expense(params[:id])
+  @db.edit_expense(params[:item], params[:price], params[:date], params[:wasted], params[:id])
   redirect "#{session[:previous_page]}"
 end
 

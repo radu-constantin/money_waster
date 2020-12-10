@@ -1,4 +1,3 @@
-
 <% if @selected_expenses.empty? %>
     <h3> You haven't spent any money <%=@display_date%>. </h3>
 <% else %>
@@ -17,11 +16,11 @@
             <% @selected_expenses.each do |expense| %>
                 <tr>
                     <td></td>
-                    <td><%= expense.name %></td>
-                    <td><%= expense.price %></td>
-                    <td><%= expense.wasted_check %></td>
-                    <td><%= expense.date %></td>
-                    <td><a href="/expense/<%=expense.id%>">Edit</a>
+                    <td><%= expense[:name] %></td>
+                    <td><%= expense[:price] %></td>
+                    <td><%= expense[:wasted_check] %></td>
+                    <td><%= expense[:date] %></td>
+                    <td><a href="/expense/<%=expense[:id]%>">Edit</a>
                 </tr>
                 <% end %>
         </tbody>

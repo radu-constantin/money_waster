@@ -1,16 +1,16 @@
-<form action="/expense/<%=@expense.id%>" method="POST">
+<form action="/expense/<%=@expense[0][:id]%>" method="POST">
     <h2>Edit:</h2>
 
     <label for="item">Item:</label>
-    <input type="text" name="item" id="item" value= "<%=@expense.name%>" required>
+    <input type="text" name="item" id="item" value= "<%=@expense[0][:name]%>" required>
     <br>
     <br>
     <label for="price">Price:</label>
-    <input type="number" name="price" id="price" min="0" value= "<%=@expense.price%>" required>
+    <input type="number" name="price" id="price" min="0" value="<%=@expense[0][:price]%>" step = "0.01" required>
     <br>
     <br>
     <label for="date">Date:</label>
-    <input type="date" name="date" id="date" value="<%=@expense.date%>" required>
+    <input type="date" name="date" id="date" value="<%=@expense[0][:date]%>" required>
     <br>
     <br>
     <div id="wasted_check">
